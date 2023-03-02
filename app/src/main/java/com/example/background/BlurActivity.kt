@@ -2,6 +2,7 @@ package com.example.background
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -39,11 +40,14 @@ class BlurActivity : AppCompatActivity() {
 
     private fun requestPermission() {
         permission.permissionResultLauncher =
-            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            registerForActivityResult(
+                ActivityResultContracts.RequestMultiplePermissions()
+            ) { permissions ->
                 permission.isReadPermissionGranted =
                     permissions[android.Manifest.permission.READ_EXTERNAL_STORAGE] ?: false
                 permission.isWritePermissionGranted =
                     permissions[android.Manifest.permission.WRITE_EXTERNAL_STORAGE] ?: false
+
             }
     }
 

@@ -22,15 +22,6 @@ class Permissions(private val ctx: Context) {
             _permissionResultLauncher = value
         }
 
-//    private val requestPermissionLauncher =
-//        (
-//            ActivityResultContracts.RequestMultiplePermissions()
-//        ) { permissions: Map<String, String> ->
-//            permissions.forEach {
-//                Log.d(TAG, "${it.key} = ${it.value}")
-//            }
-//        }
-
     fun requestPermission() {
         val minSDK = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
