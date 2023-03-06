@@ -4,27 +4,25 @@ import android.app.Application
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkContinuation
-import androidx.work.WorkManager
+import androidx.work.*
 import com.example.background.workers.BlurWorker
-import com.example.background.workers.CleanupWorker
 import com.example.background.workers.SaveImageToFileWorker
 
 class BlurViewModel(application: Application) : ViewModel() {
 
     internal var imageUri: Uri? = null
     internal var outputUri: Uri? = null
+    var outputWorkInfo: LiveData<List<WorkInfo>>
 
     private val workManager = WorkManager.getInstance(application)
 
 
     init {
         imageUri = getImageUri(application.applicationContext)
+        outputWorkInfo = workManager.getWorkInfosByTagLiveData(TAG_OUTPUT)
     }
 
     /**
@@ -34,13 +32,27 @@ class BlurViewModel(application: Application) : ViewModel() {
     internal fun applyBlur(blurLevel: Int) {
         //workManager.enqueue(OneTimeWorkRequest.from(BlurWorker::class.java))
         var continuation: WorkContinuation
+        val constraint = Constraints.Builder()
+
+//            .setRequiresCharging(true)
+            .build()
+
 
         val blurRequest = OneTimeWorkRequestBuilder<BlurWorker>()
             .setInputData(createInputDataForUri())
             .build()
-        continuation = workManager.beginWith(blurRequest)
 
-        val saveImage = OneTimeWorkRequest.Builder(SaveImageToFileWorker::class.java).build()
+        continuation = workManager.beginUniqueWork(
+            IMAGE_MANIPULATION_WORK_NAME,
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            blurRequest
+        )
+
+        val saveImage = OneTimeWorkRequest
+            .Builder(SaveImageToFileWorker::class.java)
+            .setConstraints(constraint)
+            .addTag(TAG_OUTPUT)
+            .build()
         continuation = continuation.then(saveImage)
 
         continuation.enqueue()

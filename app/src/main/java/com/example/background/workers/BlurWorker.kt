@@ -39,6 +39,7 @@ class BlurWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
             makeStatusNotification("Blurring image", applicationContext)
             val data = blur()
             sleep()
+            Log.d(TAG, "doWork: ${data.getString(KEY_IMAGE_URI)}")
             Result.success(data)
         } catch (e: Throwable) {
             makeStatusNotification("Image Blurred and Saved", applicationContext)

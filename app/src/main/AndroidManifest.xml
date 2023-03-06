@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.background">
-
+<queries>
+    <intent>
+        <action android:name="android.intent.action.GET_CONTENT"/>
+        <data android:mimeType="image/*"/>
+    </intent>
+</queries>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission

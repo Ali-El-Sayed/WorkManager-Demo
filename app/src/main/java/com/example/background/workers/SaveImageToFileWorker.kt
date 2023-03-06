@@ -51,8 +51,10 @@ class SaveImageToFileWorker(ctx: Context, params: WorkerParameters) : Worker(ctx
             )
 
             val imageUrl: Uri? = save(UUID.randomUUID().toString(), bitmap)
+            Log.d(TAG, "imageUrl: $imageUrl")
             if (imageUrl != null) {
-                val output = workDataOf(KEY_IMAGE_URI to imageUrl)
+                val output = workDataOf(KEY_IMAGE_URI to imageUrl.toString())
+                Log.d(TAG, "saveImage: ${output.getString(KEY_IMAGE_URI)}")
                 Result.success(output)
             } else {
                 Log.e(TAG, "Writing to MediaStore failed")
